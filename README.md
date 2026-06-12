@@ -1,16 +1,19 @@
 # Music Preference Prediction
 
-Predicting personal music preferences using custom audio features and machine learning.
+A machine learning project exploring whether personal music preferences can be predicted from custom audio features extracted directly from audio files.
 
 ## Project Goal
 
-The goal of this project is to investigate how well audio characteristics alone can predict my personal music preferences.
+The objective of this project is to investigate how well audio characteristics alone can explain and predict my personal song ratings.
+
+The project combines audio signal processing, feature engineering, database management, and machine learning to build a personalized music preference model.
 
 ## Dataset
 
-* 101 manually rated songs
+* 125 manually rated songs
 * Rating scale: 1–10
-* Audio features extracted from local MP3 files using Python
+* Features extracted directly from local MP3 files
+* SQLite database for feature storage and rating management
 
 To analyze your own music collection, place MP3 files in:
 
@@ -20,12 +23,21 @@ data/songs_mp3/
 
 Audio files are not included in this repository.
 
-## Features
+## Extracted Features
 
-The extracted feature set includes:
+### Rhythmic Features
 
-* BPM (tempo)
+* BPM (Tempo)
+* Timing Deviation
+* Asymmetry Bias
+* Asymmetry Index
+
+### Dynamic Features
+
 * Dynamic Variation Score
+
+### Spectral Features
+
 * Sub Bass
 * Bass
 * Low Mid
@@ -35,41 +47,75 @@ The extracted feature set includes:
 * Brilliance
 * Spectral Spread
 * Spectral Balance
-* Timing Deviation
-* Asymmetry Bias
-* Asymmetry Index
 
-## Models
+## Machine Learning Models
 
-The following machine learning models were evaluated:
+The following models were evaluated:
 
-* Ridge Regression
+* Ridge Regression (linear baseline)
 * Random Forest Regression
+* Extra Trees Regression
 
-Evaluation was performed using 5-fold cross validation.
+Model performance was evaluated using **5-Fold Cross Validation**.
 
 ## Results
 
+### Best Performing Model: Extra Trees Regression
+
 | Metric               | Value |
 | -------------------- | ----: |
-| Cross Validation R²  |  0.29 |
-| Cross Validation MAE |  1.58 |
+| Cross Validation R²  |  0.27 |
+| Cross Validation MAE |  1.63 |
 
-The Random Forest model significantly outperformed the linear baseline, indicating that music preference depends on non-linear interactions between audio features.
+The Extra Trees model achieved the best predictive performance and outperformed both the linear baseline and the Random Forest model.
 
 ## Feature Importance
+
+The Extra Trees model identified several spectral characteristics as the most influential predictors.
 
 ![Feature Importance](images/feature_importance.png)
 
 ## Actual vs Predicted Ratings
 
+The plot below compares the predicted ratings with the manually assigned ratings.
+
 ![Actual vs Predicted](images/actual_vs_predicted.png)
 
-## Technologies
+## Technology Stack
 
 * Python
 * SQLite
 * Pandas
-* Scikit-Learn
+* NumPy
 * Librosa
+* Scikit-Learn
 * Matplotlib
+
+## Repository Structure
+
+```text
+data/
+├── songs.db
+└── songs_mp3/
+
+images/
+├── actual_vs_predicted.png
+└── feature_importance.png
+
+src/
+├── extract_features.py
+├── init_db.py
+└── train_model.py
+```
+
+## Future Improvements
+
+Potential future extensions include:
+
+* Harmonic and chroma-based features
+* Key and mode detection (major/minor)
+* Larger and more diverse song datasets
+* Additional machine learning models and hyperparameter optimization
+
+```
+```

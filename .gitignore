@@ -7,6 +7,7 @@ __pycache__/
 .vscode/
 .idea/
 results.json
+songs.db
 
 data/songs_mp3/*
 !data/songs_mp3/.gitkeep

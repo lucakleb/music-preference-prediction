@@ -4,7 +4,7 @@ import sqlite3
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_absolute_error, r2_score
 from sklearn.model_selection import KFold, cross_val_score, train_test_split
@@ -142,38 +142,47 @@ def main() -> None:
     ridge = Ridge(alpha=1.0)
     ridge_cv_r2, ridge_cv_mae = evaluate_cv(ridge, X, y, cv)
 
-    forest = RandomForestRegressor(
+    random_forest = RandomForestRegressor(
+    n_estimators= 300,
+    random_state= 42
+    )
+
+    random_forest_cv_r2, random_forest_cv_mae = evaluate_cv(random_forest, X, y, cv)
+
+    extra_tree = ExtraTreesRegressor(
         n_estimators=300,
         random_state=42,
     )
 
-    forest_cv_r2, forest_cv_mae = evaluate_cv(forest, X, y, cv)
+    extra_tree_cv_r2, extra_tree_cv_mae = evaluate_cv(extra_tree, X, y, cv)
 
-    forest.fit(X_train, y_train)
-    predictions = forest.predict(X_test)
+    extra_tree.fit(X_train, y_train)
+    predictions = extra_tree.predict(X_test)
 
     test_r2 = r2_score(y_test, predictions)
     test_mae = mean_absolute_error(y_test, predictions)
 
     save_actual_vs_predicted_plot(y_test, predictions)
-    save_feature_importance_plot(forest, FEATURE_COLUMNS)
+    save_feature_importance_plot(extra_tree, FEATURE_COLUMNS)
 
     results = {
         "dataset_size": len(df),
         "ridge_cv_r2": round(ridge_cv_r2, 3),
         "ridge_cv_mae": round(ridge_cv_mae, 3),
-        "random_forest_cv_r2": round(forest_cv_r2, 3),
-        "random_forest_cv_mae": round(forest_cv_mae, 3),
-        "random_forest_test_r2": round(test_r2, 3),
-        "random_forest_test_mae": round(test_mae, 3),
+        "random_forest_cv_r2": round(random_forest_cv_r2, 3),
+        "random_forest_cv_mae": round(random_forest_cv_mae, 3),
+        "extra_tree_cv_r2": round(extra_tree_cv_r2, 3),
+        "extra_tree_cv_mae": round(extra_tree_cv_mae, 3),
+        "extra_tree_test_r2": round(test_r2, 3),
+        "extra_tree_test_mae": round(test_mae, 3),
     }
 
     save_results(results)
 
     print("Training complete.")
     print(f"Dataset size: {results['dataset_size']} songs")
-    print(f"Random Forest CV R²: {results['random_forest_cv_r2']}")
-    print(f"Random Forest CV MAE: {results['random_forest_cv_mae']}")
+    print(f"Extra Tree CV R²: {results['extra_tree_cv_r2']}")
+    print(f"Extra Tree CV MAE: {results['extra_tree_cv_mae']}")
     print("Plots saved to images/")
     print("Results saved to results.json")
 

@@ -15,13 +15,13 @@ The project combines audio signal processing, feature engineering, database mana
 * Features extracted directly from local MP3 files
 * SQLite database for feature storage and rating management
 
+Audio files are **not included** in this repository.
+
 To analyze your own music collection, place MP3 files in:
 
 ```text
 data/songs_mp3/
 ```
-
-Audio files are not included in this repository.
 
 ## Extracted Features
 
@@ -67,17 +67,13 @@ Model performance was evaluated using **5-Fold Cross Validation**.
 | Cross Validation R²  |  0.27 |
 | Cross Validation MAE |  1.63 |
 
-The Extra Trees model achieved the best predictive performance and outperformed both the linear baseline and the Random Forest model.
+The Extra Trees model outperformed the linear baseline and Random Forest model, indicating that personal music preferences depend on non-linear interactions between audio features.
 
 ## Feature Importance
-
-The Extra Trees model identified several spectral characteristics as the most influential predictors.
 
 ![Feature Importance](images/feature_importance.png)
 
 ## Actual vs Predicted Ratings
-
-The plot below compares the predicted ratings with the manually assigned ratings.
 
 ![Actual vs Predicted](images/actual_vs_predicted.png)
 
@@ -91,21 +87,102 @@ The plot below compares the predicted ratings with the manually assigned ratings
 * Scikit-Learn
 * Matplotlib
 
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/music-preference-prediction.git
+cd music-preference-prediction
+```
+
+Create a virtual environment:
+
+```bash
+python3 -m venv venv
+```
+
+Activate the virtual environment:
+
+### macOS / Linux
+
+```bash
+source venv/bin/activate
+```
+
+### Windows
+
+```bash
+venv\Scripts\activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+
+### 1. Create the database
+
+```bash
+python3 src/create_database.py
+```
+
+### 2. Add MP3 files
+
+Place your audio files in:
+
+```text
+data/songs_mp3/
+```
+
+### 3. Extract features
+
+```bash
+python3 src/extract_features.py
+```
+
+This will:
+
+* Analyze all MP3 files
+* Extract audio features
+* Store the results in the SQLite database
+
+### 4. Train the model
+
+```bash
+python3 src/train_model.py
+```
+
+This will:
+
+* Load the feature database
+* Train and evaluate the machine learning models
+* Generate evaluation plots in the `images/` folder
+
 ## Repository Structure
 
 ```text
-data/
-├── songs.db
-└── songs_mp3/
-
-images/
-├── actual_vs_predicted.png
-└── feature_importance.png
-
-src/
-├── extract_features.py
-├── init_db.py
-└── train_model.py
+music-preference-prediction/
+│
+├── data/
+│   ├── songs.db
+│   └── songs_mp3/
+│
+├── images/
+│   ├── actual_vs_predicted.png
+│   └── feature_importance.png
+│
+├── src/
+│   ├── create_database.py
+│   ├── extract_features.py
+│   └── train_model.py
+│
+├── README.md
+├── requirements.txt
+└── .gitignore
 ```
 
 ## Future Improvements
@@ -114,8 +191,10 @@ Potential future extensions include:
 
 * Harmonic and chroma-based features
 * Key and mode detection (major/minor)
+* Spotify API integration
 * Larger and more diverse song datasets
 * Additional machine learning models and hyperparameter optimization
 
-```
-```
+## License
+
+This project is intended for educational and research purposes.

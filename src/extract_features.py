@@ -1,5 +1,6 @@
 from pathlib import Path
 import sqlite3
+from typing import Dict, Optional, Tuple
 
 import librosa
 import numpy as np
@@ -52,7 +53,11 @@ def get_bpm(signal: np.ndarray, sr: int) -> float:
     return round(float(np.mean(tempo)), 2)
 
 
-def get_dynamic_variation(signal: np.ndarray, sr: int, time_window: float = DV_TIME_WINDOW) -> float:
+def get_dynamic_variation(
+    signal: np.ndarray,
+    sr: int,
+    time_window: float = DV_TIME_WINDOW,
+) -> float:
     max_abs = np.max(np.abs(signal))
 
     if max_abs == 0:
@@ -80,10 +85,10 @@ def get_dynamic_variation(signal: np.ndarray, sr: int, time_window: float = DV_T
 def get_band_profile(
     signal: np.ndarray,
     sr: int,
-    bands: dict[str, tuple[int, int]] = BAND_DEFINITIONS,
+    bands: Dict[str, Tuple[int, int]] = BAND_DEFINITIONS,
     n_fft: int = 2048,
     hop_length: int = 512,
-) -> dict[str, float]:
+) -> Dict[str, float]:
     spectrum = np.abs(librosa.stft(signal, n_fft=n_fft, hop_length=hop_length)) ** 2
     frequencies = librosa.fft_frequencies(sr=sr, n_fft=n_fft)
 
@@ -113,7 +118,9 @@ def get_band_profile(
     }
 
 
-def get_spectral_metrics(band_profile: dict[str, float]) -> tuple[float, float]:
+def get_spectral_metrics(
+    band_profile: Dict[str, float]
+) -> Tuple[float, float]:
     representative_frequencies = {}
 
     for band, value in band_profile.items():
@@ -142,13 +149,16 @@ def get_timing_asymmetry(
     signal: np.ndarray,
     sr: int,
     hop_length: int = 512,
-) -> tuple[float | None, float | None, float | None]:
+) -> Tuple[Optional[float], Optional[float], Optional[float]]:
     _, beat_frames = librosa.beat.beat_track(
         y=signal,
         sr=sr,
         hop_length=hop_length,
         units="frames",
     )
+
+    if len(beat_frames) < 2:
+        return None, None, None
 
     onset_env = librosa.onset.onset_strength(
         y=signal,
@@ -240,7 +250,7 @@ def get_timing_asymmetry(
     return asymmetry_bias, timing_deviation, float(asymmetry_index)
 
 
-def extract_features(file_path: Path) -> dict:
+def extract_features(file_path: Path) -> Dict[str, Optional[float]]:
     signal, sr = librosa.load(file_path, sr=SAMPLE_RATE)
 
     band_profile = get_band_profile(signal, sr)
@@ -263,7 +273,7 @@ def extract_features(file_path: Path) -> dict:
     return song
 
 
-def upsert_song(conn: sqlite3.Connection, song: dict) -> None:
+def upsert_song(conn: sqlite3.Connection, song: Dict[str, object]) -> None:
     placeholders = ", ".join(["?"] * len(COLUMNS))
     columns = ", ".join(COLUMNS)
 

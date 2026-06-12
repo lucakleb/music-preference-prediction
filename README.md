@@ -138,6 +138,12 @@ Place your audio files in:
 data/songs_mp3/
 ```
 
+### Dataset Requirements
+
+The model uses 5-fold cross validation for evaluation.
+
+A minimum of 5 rated songs is required, but reliable performance estimates generally require significantly larger datasets. The results reported in this project were obtained using 125 manually rated songs.
+
 ### 3. Extract features
 
 ```bash

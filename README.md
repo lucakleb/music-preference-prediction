@@ -150,7 +150,18 @@ This will:
 * Extract audio features
 * Store the results in the SQLite database
 
-### 4. Train the model
+### 4. Rate the songs
+
+After feature extraction, manually add a rating for each song in the SQLite database.
+
+Ratings should be entered on a scale from 1 to 10:
+
+- `1` = do not like the song
+- `10` = strongly like the song
+
+The `rating` column is used as the target variable for model training.
+
+### 5. Train the model
 
 ```bash
 python3 src/train_model.py
